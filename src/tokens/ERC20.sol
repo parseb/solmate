@@ -30,7 +30,7 @@ abstract contract ERC20 {
 
     uint256 public totalSupply;
 
-    mapping(address => uint256) public balanceOf;
+    mapping(address => uint256) public storedBalanceOf;
 
     mapping(address => mapping(address => uint256)) public allowance;
 
@@ -74,12 +74,12 @@ abstract contract ERC20 {
     }
 
     function transfer(address to, uint256 amount) public virtual returns (bool) {
-        balanceOf[msg.sender] -= amount;
+        storedBalanceOf[msg.sender] -= amount;
 
         // Cannot overflow because the sum of all user
         // balances can't exceed the max uint256 value.
         unchecked {
-            balanceOf[to] += amount;
+            storedBalanceOf[to] += amount;
         }
 
         emit Transfer(msg.sender, to, amount);
@@ -96,12 +96,12 @@ abstract contract ERC20 {
 
         if (allowed != type(uint256).max) allowance[from][msg.sender] = allowed - amount;
 
-        balanceOf[from] -= amount;
+        storedBalanceOf[from] -= amount;
 
         // Cannot overflow because the sum of all user
         // balances can't exceed the max uint256 value.
         unchecked {
-            balanceOf[to] += amount;
+            storedBalanceOf[to] += amount;
         }
 
         emit Transfer(from, to, amount);
@@ -186,14 +186,14 @@ abstract contract ERC20 {
         // Cannot overflow because the sum of all user
         // balances can't exceed the max uint256 value.
         unchecked {
-            balanceOf[to] += amount;
+            storedBalanceOf[to] += amount;
         }
 
         emit Transfer(address(0), to, amount);
     }
 
     function _burn(address from, uint256 amount) internal virtual {
-        balanceOf[from] -= amount;
+        storedBalanceOf[from] -= amount;
 
         // Cannot underflow because a user's balance
         // will never be larger than the total supply.
