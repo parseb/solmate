@@ -32,20 +32,9 @@ abstract contract ERC1155 {
                              ERC1155 STORAGE
     //////////////////////////////////////////////////////////////*/
 
-    mapping(uint256 => uint256) public totalSupplyOfId;
-
     mapping(address => mapping(uint256 => uint256)) public balanceOf;
 
     mapping(address => mapping(address => bool)) public isApprovedForAll;
-
-
-    /*//////////////////////////////////////////////////////////////
-                             totalSupply for exit module
-    //////////////////////////////////////////////////////////////*/
-
-    function totalSupply() public view virtual returns (uint) {
-        return totalSupplyOfId[uint160(bytes20(address(this))) - 1]; /// @dev @security : harcoded for use case 
-    }
 
     /*//////////////////////////////////////////////////////////////
                              METADATA LOGIC
@@ -167,7 +156,6 @@ abstract contract ERC1155 {
         bytes memory data
     ) internal virtual {
         balanceOf[to][id] += amount;
-        totalSupplyOfId[id] += amount;
 
         emit TransferSingle(msg.sender, address(0), to, id, amount);
 
@@ -192,7 +180,6 @@ abstract contract ERC1155 {
 
         for (uint256 i = 0; i < idsLength; ) {
             balanceOf[to][ids[i]] += amounts[i];
-            totalSupplyOfId[ids[i]] += amounts[i];
 
             // An array can't have a total length
             // larger than the max uint256 value.
@@ -223,7 +210,7 @@ abstract contract ERC1155 {
 
         for (uint256 i = 0; i < idsLength; ) {
             balanceOf[from][ids[i]] -= amounts[i];
-            totalSupplyOfId[ids[i]] -= amounts[i];
+
             // An array can't have a total length
             // larger than the max uint256 value.
             unchecked {
@@ -240,7 +227,6 @@ abstract contract ERC1155 {
         uint256 amount
     ) internal virtual {
         balanceOf[from][id] -= amount;
-        totalSupplyOfId[id] -= amount;
 
         emit TransferSingle(msg.sender, from, address(0), id, amount);
     }
